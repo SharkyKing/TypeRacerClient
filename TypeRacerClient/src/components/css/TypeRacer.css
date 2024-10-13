@@ -1,0 +1,93 @@
+.displaywords-wrapper {
+    background-color: white;
+    height: fit-content;
+    margin-top: 2rem;
+    padding: 2.5rem;
+    font-size: 18pt;
+}
+
+.forminput{
+    margin: 0 !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.forminput .s-input {
+    background-color: rgba(255, 255, 255, 0.726);
+    width: 80%;
+    height: 5rem;
+    margin: 1rem;
+    border-radius: 1rem;
+    font-size: 24pt;
+    transition: 0.3s ease;
+    border: none;
+
+    border: 0.25rem dashed black;
+    padding: 10px;
+    display: inline-block;
+    font-family: 'Shadows Into Light', cursive;
+    transform: rotate(0deg);
+}
+
+.forminput .s-input:focus {
+    outline: none;
+    border-color: rgb(168, 168, 168);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.forminput .s-input:hover {
+    background-color: rgb(168, 168, 168);
+    color: white;
+    cursor: text;
+    transform: rotate(0deg);
+}
+
+.start{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.gameinfo-wrapper{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: rgba(1, 119, 119, 0.379);
+}
+
+.gameinfo-wrapper .nickname{
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+    background-color: black;
+    width: 20%;
+    padding-inline: 1rem;
+}
+
+.countdown{
+    padding: 0.5rem;
+    width: 80%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding-left: 5rem;
+    height: 4rem;
+}
+
+.countdown h1{
+    margin-right: 2rem;
+}
+
+.other-players{
+    background-color: black;
+    padding: 1rem;
+}
+
+.player-info{
+    width: 10rem;
+}
+
+.player{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}

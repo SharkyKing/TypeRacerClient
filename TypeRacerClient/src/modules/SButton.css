@@ -1,0 +1,24 @@
+.s-button{
+    background-color: white;
+    width: 20rem;
+    height: 5rem;
+    margin: 1rem;
+    border-radius: 1rem;
+    font-size: 24pt;
+    transition: 0.3s ease;
+    border: none;
+
+    border: 0.25rem dashed black;
+    padding: 10px;
+    display: inline-block;
+    font-family: 'Shadows Into Light', cursive;
+    transform: rotate(-1deg);
+    background-color: #fff;
+}
+
+.s-button:hover{
+    background-color: black;
+    color: white;
+    cursor: pointer;
+    transform: rotate(+5deg);
+}

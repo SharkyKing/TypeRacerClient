@@ -1,0 +1,15 @@
+.gamemenus-body h2{
+    background-color: black;
+    height: 5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.gamemenus-wrapper{
+    height: 30rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}

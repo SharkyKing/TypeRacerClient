@@ -1,0 +1,46 @@
+@import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
+
+body {
+    font-family: 'Shadows Into Light', cursive;
+    background-color: rgb(157, 118, 118);
+    color: white;
+    height: 100vh;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    background-image: url('../public/images/background.png');
+    background-size:cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+/* Customize headers and text styles */
+h1,
+h2,
+h3 {
+    font-family: 'Shadows Into Light', cursive;
+    /* Apply the font to headings */
+}
+
+.navbar{
+    width: 100%;
+    background-color: rgb(255, 217, 0);
+    height: fit-content;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border-bottom: 0.5rem black dashed;
+}
+
+.navbar img{
+    height: 5rem;
+    margin-left: 5rem;
+    margin-right: 2rem;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+}
+
+.navbar h1{
+    pointer-events: none;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+    padding-inline: 0.5rem;
+}
