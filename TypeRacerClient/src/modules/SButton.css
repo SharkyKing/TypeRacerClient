@@ -22,3 +22,11 @@
     cursor: pointer;
     transform: rotate(+5deg);
 }
+
+.activebtn{
+    background-color:dimgray;
+    color: white;
+    cursor: pointer;
+    transform: rotate(+5deg);
+    text-decoration: underline;
+}

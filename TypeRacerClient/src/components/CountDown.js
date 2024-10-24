@@ -3,7 +3,7 @@ import { useSocket } from "../SocketProvider";
 
 const CountDown = (props) => {
     const {connection} = useSocket();
-    const [timer, setTimer] = useState({ countDown: "sss", msg: "ssss" });
+    const [timer, setTimer] = useState({ countDown: "", msg: "" });
     const { countDown, msg } = timer;
 
     useEffect(() => {

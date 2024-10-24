@@ -4,6 +4,8 @@
     margin-top: 2rem;
     padding: 2.5rem;
     font-size: 18pt;
+    pointer-events: none;
+    user-select: none;
 }
 
 .forminput{
@@ -90,4 +92,69 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+}
+
+.powerboard{
+    width: 100%;
+    height: 6rem;
+    background-color: black;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+.powerboard .powerBlock{
+    height: 5rem;
+    width: 5rem;
+    margin-left: 1rem;
+    margin-right: 1rem;
+    border-radius: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.powerBlock-icon{
+    background-color: white;
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+    border-bottom: 0.25rem dashed black;
+    width: 100%;
+    height: 3.5rem;
+    pointer-events: none;
+    user-select: none;
+}
+
+.powerBlock-key{
+    background-color: white;
+    border-bottom-left-radius: 1rem;
+    border-bottom-right-radius: 1rem;
+    width: 100%;
+    height: 2rem;
+    pointer-events: none;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: black;
+}
+
+.powerBlock-icon.freeze{
+    background-image: url('../../../public/images/freeze.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.powerBlock-icon.rewind {
+    background-image: url('../../../public/images/rewind.png');
+    background-size:contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.powerBlock-icon.invisible {
+    background-image: url('../../../public/images/invisible.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
 }

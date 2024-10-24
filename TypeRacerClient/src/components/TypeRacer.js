@@ -79,6 +79,32 @@ const TypeRacer = ({ gameState }) => {
                 <div className="start">
                     <StartBtn player={findPlayer(players)} gameId={id} />
                 </div>
+                <div className="powerboard">
+                    <div className="powerBlock">
+                        <div className="powerBlock-icon freeze">
+
+                        </div>
+                        <div className="powerBlock-key">
+                            <p>F</p>
+                        </div>
+                    </div>
+                    <div className="powerBlock">
+                        <div className="powerBlock-icon rewind">
+
+                        </div>
+                        <div className="powerBlock-key">
+                            <p>R</p>
+                        </div>
+                    </div>
+                    <div className="powerBlock">
+                        <div className="powerBlock-icon invisible">
+
+                        </div>
+                        <div className="powerBlock-key">
+                            <p>I</p>
+                        </div>
+                    </div>
+                </div>
                 <div className="other-players">
                     {players && players.map((p) => {
                         if (p.socketID !== findPlayer(players)?.socketID) {
