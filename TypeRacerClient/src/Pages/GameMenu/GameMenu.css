@@ -1,4 +1,4 @@
-.gamemenus-body h2{
+.gamemenu-body h2{
     background-color: black;
     height: 5rem;
     display: flex;
@@ -6,7 +6,7 @@
     justify-content: center;
 }
 
-.gamemenus-wrapper{
+.gamemenu-wrapper{
     height: 30rem;
     display: flex;
     flex-direction: column;

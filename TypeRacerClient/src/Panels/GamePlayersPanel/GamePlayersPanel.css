@@ -1,0 +1,9 @@
+.player-info {
+    width: 10rem;
+}
+
+.player {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}

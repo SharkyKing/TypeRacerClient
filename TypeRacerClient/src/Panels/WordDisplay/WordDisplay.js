@@ -4,16 +4,18 @@ const typedCorrectStyle={
     "backgroundColor": "#34eb77",
     "paddingLeft": "1rem",
     "paddingRight": "1rem",
+    "marginLeft": "1rem",
+    "marginRight": "1rem",
     "borderRadius":"1rem"
 }
 
 const currentStyle = {
-    "textDecoration": "underline",
+    "textDecoration": "overline",
+    "marginRight": "1rem",
     "color":"black"
 }
 
 const leftStyle = {
-    "textDecoration": "underline",
     "color":"black"
 }
 
@@ -34,7 +36,7 @@ const getLeftWords = (words, player) => {
     return <span style={leftStyle}> {wordsLeft}</span>
 }
 
-const DisplayWords = ({words, player}) => {
+const WordDisplay = ({words, player}) => {
     if (!player || typeof player.currentWordIndex !== 'number') {
         return <div style={{ color: 'black' }}>{words} ASD</div>
     }
@@ -48,4 +50,4 @@ const DisplayWords = ({words, player}) => {
     )
 }
 
-export default DisplayWords;
+export default WordDisplay;

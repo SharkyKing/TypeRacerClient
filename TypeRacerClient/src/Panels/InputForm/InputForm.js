@@ -1,8 +1,8 @@
 import React, {useState, useRef, useEffect} from "react";
-import { useSocket } from "../SocketProvider";
-import SInput from "../modules/SInput";
+import { useSocket } from "../../Providers/Socket/SocketProvider";
+import SInput from "../../Components/SInput";
 
-const Form = ({isOpen, isOver, gameId})=>{
+const InputForm = ({isOpen, isOver, gameId})=>{
     const {connection} = useSocket();
     const [userInput, setUserInput] = useState('');
     const textInput = useRef(null);
@@ -51,4 +51,4 @@ const Form = ({isOpen, isOver, gameId})=>{
     )
 }
 
-export default Form
+export default InputForm

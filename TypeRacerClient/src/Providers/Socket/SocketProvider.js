@@ -1,5 +1,8 @@
-import React, { createContext, useContext, useMemo, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { HubConnectionBuilder } from "@microsoft/signalr";
+import {useNavigate } from 'react-router-dom'
+
+import EndPoint from "../../EndPoint";
 
 const SocketContext = createContext(null);
 
@@ -9,6 +12,8 @@ export const useSocket = () => {
 }
 
 export const SocketProvider = (props) => {
+    const navigate = useNavigate();
+
     const [connection, setConnection] = useState(null);
     const [connectionId, setConnectionId] = useState(null);
 
@@ -48,8 +53,41 @@ export const SocketProvider = (props) => {
         startConnection();
     }, [connection]);
 
+    const checkConnection = async () => {
+        if (connection) {
+            try {
+                if (connection.state === "Disconnected") {
+                    await connection.start();
+                }
+            } catch (error) {
+                console.error('Connection failed: ', error);
+                navigate(EndPoint.Paths.GameMenu);
+            }
+        }
+    };
+
+    useEffect(() => {
+        checkConnection();
+    }, [navigate])
+
+    const invokeHubMethod = async (methodName, ...args) => {
+        checkConnection();
+        if (connection) {
+            try {
+                await connection.invoke(methodName, ...args);
+                console.log(`${methodName} invoked successfully`);
+            } catch (error) {
+                console.error(`Error invoking ${methodName}:`, error);
+                navigate(EndPoint.Paths.GameMenu);
+            }
+        } else {
+            console.error("Connection is not available");
+            navigate(EndPoint.Paths.GameMenu);
+        }
+    };
+
     return (
-        <SocketContext.Provider value={{ connectionId, connection }}>
+        <SocketContext.Provider value={{ connectionId, connection, checkConnection, invokeHubMethod }}>
             {props.children}
         </SocketContext.Provider>
     );

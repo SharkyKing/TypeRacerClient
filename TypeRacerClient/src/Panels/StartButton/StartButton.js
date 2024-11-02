@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { useSocket } from "../SocketProvider";
-import SButton from "../modules/SButton";
+import { useSocket } from "../../Providers/Socket/SocketProvider";
+import SButton from "../../Components/SButton";
 
-const StartBtn = ({ player, gameId }) => {
+const StartButton = ({ player, gameId }) => {
   const [showBtn, setShowBtn] = useState(true);
   const {connection} = useSocket();
   // Early return if player is null or undefined
@@ -32,4 +32,4 @@ const StartBtn = ({ player, gameId }) => {
   );
 };
 
-export default StartBtn;
+export default StartButton;

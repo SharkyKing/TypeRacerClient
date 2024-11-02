@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useSocket } from "../SocketProvider";
+import { useSocket } from "../../Providers/Socket/SocketProvider";
 
 const CountDown = (props) => {
     const {connection} = useSocket();
@@ -19,7 +19,7 @@ const CountDown = (props) => {
         return () => {
             connection.off('timerClient', handleTimerEvent);
         };
-    }, []);
+    }, [connection]);
 
 
     return (
