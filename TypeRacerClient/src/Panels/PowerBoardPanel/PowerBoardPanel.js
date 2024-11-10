@@ -1,26 +1,32 @@
-import React from "react";
+import React, {useEffect} from "react";
 import './PowerBoardPanel.css'
+import EndPoint from "../../EndPoint";
+import { useGameState } from '../../Providers/GameState/GameStateProvider';
+import { useSocket } from "../../Providers/Socket/SocketProvider";
 
 const PowerBoardPanel = ({playerPowers}) => {
-    console.log(playerPowers)
+    const {gameState, findPlayer} = useGameState();
+    const { connection } = useSocket();
 
+    useEffect(() => {
+        if(playerPowers.length > 0 && !gameState.isOpen){
+            connection.invoke('StartPowerCooldown', findPlayer().id);
+        }
+    }, [playerPowers])
 
     return (
         <>
-           {playerPowers.length > 0 && playerPowers.map((power) => (
-                <div key={power.id} className="powerBlock">
-                    <div 
-                        className="powerBlock-icon"
-                        style={{ backgroundImage: `url(${power.imagePath})` }}
-                    >
-                    </div>
-                    <div className="powerBlock-key">
-                        <p>{power.playerPowerKey}</p>
-                    </div>
-                </div>
-            ))}
+        <div className="powerBoardPanel">
+             <p className="Suggestion">To use powers, type: //[Power][PlayerId]</p>
+             <div className="powerBoardPowers">
+                {playerPowers.length > 0 && playerPowers.map((power) => (
+                    <EndPoint.Components.SPowerUnit key={power.id} power={power}/>
+                ))}
+            </div>
+           
+        </div>
         </>
     );
 }
-
+ 
 export default PowerBoardPanel;

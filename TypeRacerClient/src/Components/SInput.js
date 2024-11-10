@@ -3,11 +3,12 @@
 import React, { forwardRef } from 'react';
 import './SInput.css'; // Import styles
 
-const SInput = forwardRef(({ value, readOnly = false, onChange, placeholder = "", disabled = false, style = {}, className = "" }, ref) => {
+const SInput = forwardRef(({ value, readOnly = false, onChange, placeholder = "", disabled = false, style = {}, className = "", onKeyDown }, ref) => {
     return (
         <input
             type="text"
             value={value}
+            onKeyDown={onKeyDown}
             onChange={onChange}
             placeholder={placeholder}
             disabled={disabled}

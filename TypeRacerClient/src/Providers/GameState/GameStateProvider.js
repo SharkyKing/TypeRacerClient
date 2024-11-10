@@ -36,9 +36,7 @@ export const GameStateProvider = ({ children }) => {
     useEffect(() => {
         if (gameState.id !== "") {
             navigate(EndPoint.Paths.TypeRacerById(gameState.id));
-        } else {
-            console.log('Active game not found');
-        }
+        } 
     }, [gameState.id]);
 
     const updateGameState = (newState) => {
@@ -48,9 +46,9 @@ export const GameStateProvider = ({ children }) => {
         }));
     };
 
-    const findPlayer = (players) => {
-        if (!players || !Array.isArray(players)) return null; 
-        return players.find(player => player.socketID === connectionId); 
+    const findPlayer = () => {
+        if (!gameState.players || !Array.isArray(gameState.players)) return null; 
+        return gameState.players.find(player => player.socketID === connectionId); 
     };
 
     const fetchData = async (url, options = {}) => {
@@ -59,7 +57,6 @@ export const GameStateProvider = ({ children }) => {
             if (response.status !== 200) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-            console.log(response.data.$values, url)
             return response.data.$values;
         } catch (error) {
             console.error(`Error fetching data from ${url}:`, error);
@@ -68,11 +65,9 @@ export const GameStateProvider = ({ children }) => {
     };
 
     const handleDone = (playerWon, currentPlayer) => {
-        console.log(playerWon)
-
         const title = `Nobody won this game`;
         const text = "Be faster next time!";
-        const gifUrl = 'https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExOGkweWlweTBuanJjeWN0d2xna3R2YzJ0YWVoZTRkNmZhMTV5MjZrayZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xT0GqssRweIhlz209i/giphy.gif' 
+        const gifUrl = 'https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExaXpoNmJ2enJjZDk3ZzJ4NHZrbXlmaTY5c245N2ZxNG5zMXVkbndtaiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/PgKc6XWRjJ4GgkAevA/giphy.gif' 
         
         if(playerWon.id > 0){
             title = playerWon.socketID === connectionId ? "You WON!" : `You lost :( - ${playerWon.nickName} won the game!`;
@@ -95,7 +90,7 @@ export const GameStateProvider = ({ children }) => {
             confirmButtonText: 'OK',
         }).then((result) => {
             if (result.isConfirmed) {
-                navigate('/'); // Navigate to home on OK click
+                navigate(EndPoint.Paths.GameMenu); // Navigate to home on OK click
             }
         });
     };

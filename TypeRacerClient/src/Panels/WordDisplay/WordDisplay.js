@@ -1,5 +1,10 @@
 import React from "react";
 
+const invisibleTextStyle = {
+    color: "transparent",
+    textShadow: "0 0 0 rgba(0, 0, 0, 0)"
+};
+
 const typedCorrectStyle={
     "backgroundColor": "#34eb77",
     "paddingLeft": "1rem",
@@ -22,24 +27,29 @@ const leftStyle = {
 const getTypedWords = (words, player) => {
     const wordArray = words.split(" ");
     let typedWords = wordArray.slice(0, player.currentWordIndex).join(" ");
-    return <span style={typedCorrectStyle}>{typedWords} </span>
-}
+    const style = player.wordVisible ? typedCorrectStyle : { ...typedCorrectStyle, ...invisibleTextStyle };
+    return <span style={style}>{typedWords}</span>;
+};
 
 const getCurrentWord = (words, player) => {
     const wordArray = words.split(" ");
-    return <span style={currentStyle}>{wordArray[player.currentWordIndex]}</span>
-}
+    const style = player.wordVisible ? currentStyle : { ...currentStyle, ...invisibleTextStyle };
+    return <span style={style}>{wordArray[player.currentWordIndex]}</span>;
+};
 
 const getLeftWords = (words, player) => {
     const wordArray = words.split(" ");
     let wordsLeft = wordArray.slice(player.currentWordIndex + 1, wordArray.length).join(" ");
-    return <span style={leftStyle}> {wordsLeft}</span>
-}
+    const style = player.wordVisible ? leftStyle : { ...leftStyle, ...invisibleTextStyle };
+    return <span style={style}> {wordsLeft}</span>;
+};
 
 const WordDisplay = ({words, player}) => {
     if (!player || typeof player.currentWordIndex !== 'number') {
-        return <div style={{ color: 'black' }}>{words} ASD</div>
+        return <div style={{ color: 'black' }}>{words}</div>
     }
+
+
 
     return (
         <>

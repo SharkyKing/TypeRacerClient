@@ -101,3 +101,119 @@
     justify-content: center;
     margin-bottom: 2rem;
 }
+
+.gamelog{
+    width: 400px;
+    height: 250px;
+    background-color: rgba(255, 255, 255, 0.788);
+    position: absolute;
+    left: calc(100% - 410px);
+    top: calc(100% - 260px);
+    border: dashed 3px black;
+    border-radius: 1rem;
+}
+
+.gamelog.minimized {
+    width: 400px;
+    height: 1.5rem;
+    position: absolute;
+    left: calc(100% - 410px);
+    top: calc(100% - 2rem);
+    border: dashed 3px white;
+    border-radius: 1rem;
+}
+
+.gamelog-close{ 
+    width: calc(100% - 2rem);
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+    height: 1.5rem;
+    background-color: black;
+    color: white;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding-right: 1rem;
+    padding-left: 1rem;
+    cursor: pointer;
+    border-bottom-left-radius: 1rem;
+    border-bottom-right-radius: 1rem;
+}
+
+.gamelog-close.minimized{
+    border-bottom-left-radius: 1rem;
+    border-bottom-right-radius: 1rem;
+}
+
+.gamelog-close-icon{
+    cursor: pointer;
+}
+.game-log-text{
+    width: 100%;
+    height: 1.5rem;
+    background-color: red;
+}
+
+.gamelog-context{
+    height: calc(250px - 3.5rem);
+    overflow-y: auto;
+}
+
+.gamelog-context.minimized{
+    height: 0;
+}
+
+.gamelog .s-input{
+    font-family: 'Shadows Into Light', cursive;
+    transform: none;
+    height: 2rem;
+    width: calc(100% - 1rem);
+    padding: 0 !important;
+    margin: 0 !important;
+    font-size: 12pt;
+    border: 1px solid black;
+    padding-left: 1rem !important;
+}
+
+.gamelog .s-input:hover {
+    transform: none;
+    padding: 0;
+    margin: 0;
+}
+.gamelog .s-input.minimized {
+    display: none;
+}
+
+.logmsg{
+    width: 100%;
+    height: 2rem;
+    margin: 0;
+    padding: 0;
+    color: black;
+}
+
+.logmsg p{
+    margin: 0;
+    padding: 0;
+}
+
+.gamelog-context::-webkit-scrollbar {
+    width: 18px;
+}
+
+/* Style the scrollbar track (background area) */
+.gamelog-context::-webkit-scrollbar-track {
+    background-color: #e0e0e0;
+    border-radius: 5px;
+}
+
+.gamelog-context::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 5px;
+    border: 2px solid #e0e0e0;
+}
+
+.gamelog-context::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+}

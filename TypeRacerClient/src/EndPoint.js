@@ -6,6 +6,7 @@ import TypeRacer from "./Pages/TypeRacer/TypeRacer";
 //Components
 import SButton from "./Components/SButton";
 import SInput from "./Components/SInput";
+import SPowerUnit from "./Components/SPowerUnit";
 //Panels
 import CountDown from "./Panels/Countdown/CountDown";
 import StartButton from "./Panels/StartButton/StartButton";
@@ -21,6 +22,7 @@ const ApiIP = "https://localhost:7146/"
 const EndPoint = {
   "ApiPaths":{
     Powers:() => `${ApiIP}api/game/powers`,
+    PlayerPowers:(id) => `${ApiIP}api/game/player/${id}/powers`,
     GameTypes:() => `${ApiIP}api/game/types`,
     GameLevels:() => `${ApiIP}api/game/levels`
   },
@@ -38,7 +40,7 @@ const EndPoint = {
     CreateGame, JoinGame, GameMenu, TypeRacer
   },
   "Components":{
-    SButton, SInput
+    SButton, SInput, SPowerUnit
   },
   "Panels": {
     InputForm, WordDisplay, StartButton, CountDown, GamePlayersPanel, PowerBoardPanel

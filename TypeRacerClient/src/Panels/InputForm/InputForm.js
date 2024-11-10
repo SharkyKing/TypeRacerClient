@@ -2,7 +2,7 @@ import React, {useState, useRef, useEffect} from "react";
 import { useSocket } from "../../Providers/Socket/SocketProvider";
 import SInput from "../../Components/SInput";
 
-const InputForm = ({isOpen, isOver, gameId})=>{
+const InputForm = ({isOpen, isOver, gameId, player})=>{
     const {connection} = useSocket();
     const [userInput, setUserInput] = useState('');
     const textInput = useRef(null);
@@ -25,8 +25,7 @@ const InputForm = ({isOpen, isOver, gameId})=>{
                 try {
                     console.log(userInput, gameId)
                     await connection.invoke('UserInput', userInput, gameId);
-            resetForm();
-                    console.log('Game creation initiated');
+                    resetForm();
                 } catch (error) {
                     console.error('Error creating game:', error);
                 }
@@ -42,7 +41,7 @@ const InputForm = ({isOpen, isOver, gameId})=>{
     return (
         <SInput
             type="text"
-            readOnly={isOpen || isOver}
+            readOnly={isOpen || isOver || !player.inputEnabled}
             onChange={onChange}
             value={userInput}
             className="form-control"

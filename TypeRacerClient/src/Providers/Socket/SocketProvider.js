@@ -75,7 +75,6 @@ export const SocketProvider = (props) => {
         if (connection) {
             try {
                 await connection.invoke(methodName, ...args);
-                console.log(`${methodName} invoked successfully`);
             } catch (error) {
                 console.error(`Error invoking ${methodName}:`, error);
                 navigate(EndPoint.Paths.GameMenu);
