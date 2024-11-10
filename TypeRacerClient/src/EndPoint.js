@@ -22,6 +22,7 @@ const ApiIP = "https://localhost:7146/"
 const EndPoint = {
   "ApiPaths":{
     Powers:() => `${ApiIP}api/game/powers`,
+    WordStyles:() => `${ApiIP}api/game/wordStyles`,
     PlayerPowers:(id) => `${ApiIP}api/game/player/${id}/powers`,
     GameTypes:() => `${ApiIP}api/game/types`,
     GameLevels:() => `${ApiIP}api/game/levels`

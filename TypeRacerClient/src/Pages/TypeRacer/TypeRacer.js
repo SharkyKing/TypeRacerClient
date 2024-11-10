@@ -19,15 +19,27 @@ const TypeRacer = () => {
     //Objects
     const { id, players, words, isOpen, isOver } = gameState;
     const [playerPowers, setPlayerPowers] = useState([]);
+    const [wordStyles, setWordStyles] = useState([]);
     const [gameLogMinimized, setGameLogMinimized] = useState(false)
     const [inputValue, setInputValue] = useState("");
     const [messages, setMessages] = useState([]); 
     const gameLogRef = useRef(null);
+
     const fetchPowers = useCallback(async (playerId) => {
         try {
             const powers = await fetchData(EndPoint.ApiPaths.PlayerPowers(playerId));
             setPlayerPowers(powers);
             console.log(powers);
+        } catch (error) {
+            console.error('Error fetching game settings:', error);
+        }
+    }, [fetchData]);
+
+    const fetchWordStyles = useCallback(async () => {
+        try {
+            const WordStyles = await fetchData(EndPoint.ApiPaths.WordStyles());
+            setWordStyles(WordStyles);
+            console.log(WordStyles);
         } catch (error) {
             console.error('Error fetching game settings:', error);
         }
@@ -49,6 +61,7 @@ const TypeRacer = () => {
 
                         if(player){
                             fetchPowers(player.id);
+                            fetchWordStyles();
                             checkConnection();
                             const handleDoneInner = ({ game, playerWon }) => {
                                 handleDone(playerWon, player); 
@@ -102,7 +115,7 @@ const TypeRacer = () => {
                         <h1 className="nickname">{findPlayer()?.nickName || ""}</h1>
                     </div>
                     <div className="displaywords-wrapper">
-                        <EndPoint.Panels.WordDisplay words={words} player={findPlayer()} />
+                        <EndPoint.Panels.WordDisplay words={words} player={findPlayer()} WordStyles = {wordStyles}/>
                     </div>
                     <div className="input-wrapper">
                         <div className="forminput">

@@ -44,12 +44,12 @@ const getLeftWords = (words, player) => {
     return <span style={style}> {wordsLeft}</span>;
 };
 
-const WordDisplay = ({words, player}) => {
+const WordDisplay = ({words, player, WordStyles}) => {
     if (!player || typeof player.currentWordIndex !== 'number') {
         return <div style={{ color: 'black' }}>{words}</div>
     }
 
-
+    //WordStyles where id = player.WordStyleId
 
     return (
         <>
