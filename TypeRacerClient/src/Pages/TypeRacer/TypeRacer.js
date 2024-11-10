@@ -10,8 +10,8 @@ import './TypeRacer.css';
 
 const TypeRacer = () => {
     //Providers
-    const {gameState, fetchData, findPlayer, handleDone} = useGameState();
-    const {connection, checkConnection} = useSocket();
+    const { gameState, fetchData, findPlayer, handleDone } = useGameState();
+    const { connection, checkConnection } = useSocket();
 
     //Utility
     const navigate = useNavigate();
@@ -19,10 +19,11 @@ const TypeRacer = () => {
     //Objects
     const { id, players, words, isOpen, isOver } = gameState;
     const [playerPowers, setPlayerPowers] = useState([]);
-    const [wordStyles, setWordStyles] = useState([]);
-    const [gameLogMinimized, setGameLogMinimized] = useState(false)
+    const [wordStyles, setWordStyles] = useState([]); // Word styles from server
+    const [currentStyleIndex, setCurrentStyleIndex] = useState(0); // Index to track current style
+    const [gameLogMinimized, setGameLogMinimized] = useState(false);
     const [inputValue, setInputValue] = useState("");
-    const [messages, setMessages] = useState([]); 
+    const [messages, setMessages] = useState([]);
     const gameLogRef = useRef(null);
 
     const fetchPowers = useCallback(async (playerId) => {
@@ -37,9 +38,13 @@ const TypeRacer = () => {
 
     const fetchWordStyles = useCallback(async () => {
         try {
-            const WordStyles = await fetchData(EndPoint.ApiPaths.WordStyles());
-            setWordStyles(WordStyles);
-            console.log(WordStyles);
+            const WordStyles = await fetchData(EndPoint.ApiPaths.WordStyles());            
+            if (Array.isArray(WordStyles)) {
+                setWordStyles(WordStyles);
+                console.log("Fetched WordStyles:", WordStyles);
+            } else {
+                console.error("Fetched WordStyles is not an array:", WordStyles);
+            }
         } catch (error) {
             console.error('Error fetching game settings:', error);
         }
@@ -53,18 +58,19 @@ const TypeRacer = () => {
     }, [messages]);
 
     useEffect(() => {
-        if(gameState){
-            if(gameState.id !== ""){
-                if(gameState.players){
-                    if(gameState.players.length > 0){
-                        let player = findPlayer(); 
+        if (gameState) {
+            if (gameState.id !== "") {
+                if (gameState.players) {
+                    if (gameState.players.length > 0) {
+                        let player = findPlayer();
 
-                        if(player){
+                        if (player) {
                             fetchPowers(player.id);
                             fetchWordStyles();
                             checkConnection();
+
                             const handleDoneInner = ({ game, playerWon }) => {
-                                handleDone(playerWon, player); 
+                                handleDone(playerWon, player);
                             };
 
                             const handleMessage = ({ playerNickName, msg }) => {
@@ -81,8 +87,6 @@ const TypeRacer = () => {
                                 connection.off('SendMessageToGame', handleMessage);
                             };
                         }
-
-                        
                     }
                 }
             }
@@ -95,7 +99,7 @@ const TypeRacer = () => {
 
     const handleInputKeyDown = (event) => {
         if (event.key === "Enter") {
-            let player = findPlayer(); 
+            let player = findPlayer();
             let gameId = gameState.id;
             let playerId = player.id;
             console.log('SendMessage', gameId, playerId, inputValue);
@@ -104,6 +108,11 @@ const TypeRacer = () => {
         }
     };
 
+    const changeWordStyle = () => {
+        if (wordStyles.length > 0) {
+            setCurrentStyleIndex((prevIndex) => (prevIndex + 1) % wordStyles.length);
+        }
+    };
     return (
         <>
             <div className="typeracer-body">
@@ -112,41 +121,58 @@ const TypeRacer = () => {
                         <div className="countdown">
                             <EndPoint.Panels.CountDown />
                         </div>
+                        <EndPoint.Components.SButton            
+                                    onClick={()=> changeWordStyle()}
+                                    style={{
+                                        width: '10rem',
+                                        height: '2.5rem', 
+                                        padding: '5px',  
+                                        fontSize: '12pt', 
+                                    }}                               
+                            >
+                                Word Style
+                            </EndPoint.Components.SButton  >
                         <h1 className="nickname">{findPlayer()?.nickName || ""}</h1>
                     </div>
                     <div className="displaywords-wrapper">
-                        <EndPoint.Panels.WordDisplay words={words} player={findPlayer()} WordStyles = {wordStyles}/>
+                        <EndPoint.Panels.WordDisplay
+                            words={words}
+                            player={findPlayer()}
+                            WordStyles={wordStyles[currentStyleIndex] || {}} // Default to an empty object if no style exists
+                        />
                     </div>
                     <div className="input-wrapper">
                         <div className="forminput">
-                            <EndPoint.Panels.InputForm isOpen={isOpen} isOver={isOver} gameId={id} player={findPlayer()}/>
+                            <EndPoint.Panels.InputForm isOpen={isOpen} isOver={isOver} gameId={id} player={findPlayer()} />
                         </div>
                         <div className="start">
-                            <EndPoint.Panels.StartButton player={findPlayer()} gameId={id} />
+                            <EndPoint.Panels.StartButton player={findPlayer()} gameId={id} />                            
                         </div>
                     </div>
                     <div className="powerboard">
-                        <EndPoint.Panels.PowerBoardPanel playerPowers={playerPowers}/>
+                        <EndPoint.Panels.PowerBoardPanel playerPowers={playerPowers} />
                     </div>
                     <div className="other-players">
-                        <EndPoint.Panels.GamePlayersPanel players={players}/>
+                        <EndPoint.Panels.GamePlayersPanel players={players} />
                     </div>
                 </div>
             </div>
-            <div className={`gamelog ${gameLogMinimized ? 'minimized': ''}`} >
-                <div className={`gamelog-close ${gameLogMinimized ? 'minimized': ''}`} onClick={() => setGameLogMinimized(!gameLogMinimized)}>
+
+            {/* Button to change the word style */}
+            <div className={`gamelog ${gameLogMinimized ? 'minimized' : ''}`} >
+                <div className={`gamelog-close ${gameLogMinimized ? 'minimized' : ''}`} onClick={() => setGameLogMinimized(!gameLogMinimized)}>
                     <p>Chats</p>
-                    <FontAwesomeIcon icon={faUpDown} className="gamelog-close-icon" onClick={() => setGameLogMinimized(!gameLogMinimized)}/>
+                    <FontAwesomeIcon icon={faUpDown} className="gamelog-close-icon" onClick={() => setGameLogMinimized(!gameLogMinimized)} />
                 </div>
-                <div className={`gamelog-context ${gameLogMinimized ? 'minimized': ''}`} ref={gameLogRef}>
+                <div className={`gamelog-context ${gameLogMinimized ? 'minimized' : ''}`} ref={gameLogRef}>
                     {messages && messages.map((playerMsg, index) => (
                         <div key={index} className="logmsg">
                             <p><strong>{playerMsg.playerNickName}</strong>: {playerMsg.msg}</p>
                         </div>
                     ))}
                 </div>
-                <EndPoint.Components.SInput 
-                    className={`${gameLogMinimized ? 'minimized': ''}`}  
+                <EndPoint.Components.SInput
+                    className={`${gameLogMinimized ? 'minimized' : ''}`}
                     onKeyDown={handleInputKeyDown}
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
