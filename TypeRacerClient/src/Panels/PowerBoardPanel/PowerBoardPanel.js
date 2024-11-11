@@ -1,16 +1,29 @@
-import React, {useEffect} from "react";
+import React, {useEffect,  useState, useCallback} from "react";
 import './PowerBoardPanel.css'
 import EndPoint from "../../EndPoint";
 import { useGameState } from '../../Providers/GameState/GameStateProvider';
 import { useSocket } from "../../Providers/Socket/SocketProvider";
 
-const PowerBoardPanel = ({playerPowers}) => {
-    const {gameState, findPlayer} = useGameState();
+const PowerBoardPanel = ({player}) => {
+    const {gameState, findPlayer, fetchData} = useGameState();
     const { connection } = useSocket();
+    const [playerPowers, setPlayerPowers] = useState([]);
+ 
+    const fetchPowers = useCallback(async () => {
+        try {
+            const powers = await fetchData(EndPoint.ApiPaths.PlayerPowers(player.id));
+            setPlayerPowers(powers);
+        } catch (error) {
+            console.error('Error fetching game settings:', error);
+        }
+    }, [fetchData]);
 
     useEffect(() => {
         if(playerPowers.length > 0 && !gameState.isOpen){
             connection.invoke('StartPowerCooldown', findPlayer().id);
+        }
+        else{
+            fetchPowers()
         }
     }, [playerPowers])
 

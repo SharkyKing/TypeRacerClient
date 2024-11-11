@@ -44,18 +44,16 @@ const getLeftWords = (words, player) => {
     return <span style={style}> {wordsLeft}</span>;
 };
 
-const WordDisplay = ({words, player, WordStyles}) => {
+const WordDisplay = ({gameState, player}) => {
     if (!player || typeof player.currentWordIndex !== 'number') {
-        return <div style={{ color: 'black' }}>{words}</div>
+        return <div style={{ color: 'black' }}>{gameState.words}</div>
     }
-
-    //WordStyles where id = player.WordStyleId
 
     return (
         <>
-            {getTypedWords(words, player)}
-            {getCurrentWord(words, player)}
-            {getLeftWords(words, player)}
+            {getTypedWords(gameState.words, player)}
+            {getCurrentWord(gameState.words, player)}
+            {getLeftWords(gameState.words, player)}
         </>
     )
 }

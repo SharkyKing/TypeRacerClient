@@ -3,106 +3,87 @@ import { useNavigate } from 'react-router-dom';
 import { useSocket } from "../../Providers/Socket/SocketProvider";
 import { useGameState } from "../../Providers/GameState/GameStateProvider";
 import EndPoint from "../../EndPoint";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUpDown } from '@fortawesome/free-solid-svg-icons';
+
+import Swal from "sweetalert2";
 
 import './TypeRacer.css';
 
 const TypeRacer = () => {
-    //Providers
-    const {gameState, fetchData, findPlayer, handleDone} = useGameState();
-    const {connection, checkConnection} = useSocket();
-
-    //Utility
+    const {gameState, fetchData, findPlayer} = useGameState();
+    const {connection, connectionId} = useSocket();
     const navigate = useNavigate();
 
-    //Objects
-    const { id, players, words, isOpen, isOver } = gameState;
-    const [playerPowers, setPlayerPowers] = useState([]);
-    const [wordStyles, setWordStyles] = useState([]);
-    const [gameLogMinimized, setGameLogMinimized] = useState(false)
-    const [inputValue, setInputValue] = useState("");
-    const [messages, setMessages] = useState([]); 
-    const gameLogRef = useRef(null);
+    const [playerGameResults, setPlayerGameResults] = useState([]);
+    const [doneTriggered, setDoneTriggered] = useState(false);
+    const [initialLoaded, setInitialLoaded] = useState(false);
 
-    const fetchPowers = useCallback(async (playerId) => {
-        try {
-            const powers = await fetchData(EndPoint.ApiPaths.PlayerPowers(playerId));
-            setPlayerPowers(powers);
-            console.log(powers);
-        } catch (error) {
-            console.error('Error fetching game settings:', error);
-        }
-    }, [fetchData]);
-
-    const fetchWordStyles = useCallback(async () => {
-        try {
-            const WordStyles = await fetchData(EndPoint.ApiPaths.WordStyles());
-            setWordStyles(WordStyles);
-            console.log(WordStyles);
-        } catch (error) {
-            console.error('Error fetching game settings:', error);
-        }
-    }, [fetchData]);
+    const playerGameResultsRef = useRef([]);
 
     useEffect(() => {
-        if (gameLogRef.current) {
-            gameLogRef.current.scrollTop = gameLogRef.current.scrollHeight;
-        }
-        console.log(messages);
-    }, [messages]);
+        playerGameResultsRef.current = playerGameResults;
+    }, [playerGameResults]);
 
-    useEffect(() => {
-        if(gameState){
-            if(gameState.id !== ""){
-                if(gameState.players){
-                    if(gameState.players.length > 0){
-                        let player = findPlayer(); 
+    const handleDone = ({ playerWon }) => {
+        if(!doneTriggered){
 
-                        if(player){
-                            fetchPowers(player.id);
-                            fetchWordStyles();
-                            checkConnection();
-                            const handleDoneInner = ({ game, playerWon }) => {
-                                handleDone(playerWon, player); 
-                            };
+            let gameResult;
+            const currentPlayerGameResults = playerGameResultsRef.current;
 
-                            const handleMessage = ({ playerNickName, msg }) => {
-                                setMessages((prevMessages) => [
-                                    ...prevMessages,
-                                    { playerNickName, msg }
-                                ]);
-                            };
-
-                            connection.on('done', handleDoneInner);
-                            connection.on('SendMessageToGame', handleMessage);
-                            return () => {
-                                connection.off('done', handleDoneInner);
-                                connection.off('SendMessageToGame', handleMessage);
-                            };
-                        }
-
-                        
+            if (playerWon?.id > 0) {
+                gameResult = currentPlayerGameResults.find(item => item.id === (playerWon.socketID === connectionId ? 1 : 2));
+            } else {
+                gameResult = currentPlayerGameResults.find(item => item.id === 3);
+            }
+            console.log(gameResult, currentPlayerGameResults, connectionId);
+            if (gameResult) {
+                Swal.fire({
+                    title: gameResult.title,
+                    text: gameResult.text,
+                    imageUrl: gameResult.gifUrl,
+                    imageAlt: 'Game Result GIF',
+                    confirmButtonText: 'OK',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        navigate(EndPoint.Paths.GameMenu);
                     }
-                }
+                });
+
+                setDoneTriggered(true);
             }
         }
-    }, [connection, players, gameState, navigate, checkConnection, findPlayer, fetchPowers]);
+    };
 
-    if (id === "") {
-        navigate(EndPoint.Paths.GameMenu);
-    }
-
-    const handleInputKeyDown = (event) => {
-        if (event.key === "Enter") {
-            let player = findPlayer(); 
-            let gameId = gameState.id;
-            let playerId = player.id;
-            console.log('SendMessage', gameId, playerId, inputValue);
-            connection.invoke('SendMessage', gameId, playerId, inputValue);
-            setInputValue("");
+    const fetchPlayerGameResults = async () => {
+        try {
+            const PlayerGameResultData = await fetchData(EndPoint.ApiPaths.PlayerGameResults());
+            setPlayerGameResults(PlayerGameResultData);
+            console.log(PlayerGameResultData);
+        } catch (error) {
+            console.error('Error fetching game settings:', error);
         }
     };
+
+    useEffect(() => {
+        connection.on('done', handleDone);
+        return () => {
+            connection.off('done', handleDone);
+        };
+    }, [doneTriggered, connectionId]);
+
+    const InitialLoading = async () => {
+        if(!initialLoaded){
+            console.log("Initiating loading")
+            await fetchPlayerGameResults();
+            console.log("Loading finished")
+            setInitialLoaded(true);
+        }
+    }
+
+    useEffect(()=>{
+        InitialLoading();
+    }, [])
 
     return (
         <>
@@ -110,47 +91,31 @@ const TypeRacer = () => {
                 <div className="typeracer-wrapper">
                     <div className="gameinfo-wrapper">
                         <div className="countdown">
-                            <EndPoint.Panels.CountDown />
+                            <EndPoint.Panels.CountDown player={findPlayer()} gameState={gameState}/>
                         </div>
                         <h1 className="nickname">{findPlayer()?.nickName || ""}</h1>
                     </div>
                     <div className="displaywords-wrapper">
-                        <EndPoint.Panels.WordDisplay words={words} player={findPlayer()} WordStyles = {wordStyles}/>
+                        <EndPoint.Panels.WordDisplay gameState={gameState} player={findPlayer()}/>
                     </div>
                     <div className="input-wrapper">
                         <div className="forminput">
-                            <EndPoint.Panels.InputForm isOpen={isOpen} isOver={isOver} gameId={id} player={findPlayer()}/>
+                            <EndPoint.Panels.InputForm gameState={gameState} player={findPlayer()}/>
                         </div>
                         <div className="start">
-                            <EndPoint.Panels.StartButton player={findPlayer()} gameId={id} />
+                            <EndPoint.Panels.StartButton player={findPlayer()} gameState={gameState} />
                         </div>
                     </div>
                     <div className="powerboard">
-                        <EndPoint.Panels.PowerBoardPanel playerPowers={playerPowers}/>
+                        <EndPoint.Panels.PowerBoardPanel player={findPlayer()}/>
                     </div>
                     <div className="other-players">
-                        <EndPoint.Panels.GamePlayersPanel players={players}/>
+                        <EndPoint.Panels.GamePlayersPanel gameState={gameState}/>
                     </div>
                 </div>
             </div>
-            <div className={`gamelog ${gameLogMinimized ? 'minimized': ''}`} >
-                <div className={`gamelog-close ${gameLogMinimized ? 'minimized': ''}`} onClick={() => setGameLogMinimized(!gameLogMinimized)}>
-                    <p>Chats</p>
-                    <FontAwesomeIcon icon={faUpDown} className="gamelog-close-icon" onClick={() => setGameLogMinimized(!gameLogMinimized)}/>
-                </div>
-                <div className={`gamelog-context ${gameLogMinimized ? 'minimized': ''}`} ref={gameLogRef}>
-                    {messages && messages.map((playerMsg, index) => (
-                        <div key={index} className="logmsg">
-                            <p><strong>{playerMsg.playerNickName}</strong>: {playerMsg.msg}</p>
-                        </div>
-                    ))}
-                </div>
-                <EndPoint.Components.SInput 
-                    className={`${gameLogMinimized ? 'minimized': ''}`}  
-                    onKeyDown={handleInputKeyDown}
-                    value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
-                />
+            <div>
+                <EndPoint.Panels.GameLog player={findPlayer()} gameState={gameState}/>
             </div>
         </>
     );

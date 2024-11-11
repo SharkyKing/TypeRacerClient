@@ -2,14 +2,14 @@ import React from "react";
 import './GamePlayersPanel.css'
 import { useGameState } from "../../Providers/GameState/GameStateProvider";
 
-const GamePlayersPanel = ({players}) => {
+const GamePlayersPanel = () => {
     const {findPlayer, gameState} = useGameState();
     
     return (
         <> 
            
-           {players && players.length > 0 && players.map((p) => {
-                if (p.socketID !== findPlayer(players)?.socketID) {
+           {gameState.players && gameState.players.length > 0 && gameState.players.map((p) => {
+                if (p.socketID !== findPlayer()?.socketID) {
                     return (
                         <div key={p.id} className="player">
                             <div className="player-info">({p.id}) {p.nickName} -</div>

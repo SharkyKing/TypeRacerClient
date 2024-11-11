@@ -18,7 +18,6 @@ export const GameStateProvider = ({ children }) => {
 
     useEffect(() => {
         const handleGameUpdate = (game) => {
-            console.log("Game updated:", game);
             updateGameState(game);
         };
 
@@ -64,37 +63,6 @@ export const GameStateProvider = ({ children }) => {
         }
     };
 
-    const handleDone = (playerWon, currentPlayer) => {
-        const title = `Nobody won this game`;
-        const text = "Be faster next time!";
-        const gifUrl = 'https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExaXpoNmJ2enJjZDk3ZzJ4NHZrbXlmaTY5c245N2ZxNG5zMXVkbndtaiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/PgKc6XWRjJ4GgkAevA/giphy.gif' 
-        
-        if(playerWon.id > 0){
-            title = playerWon.socketID === connectionId ? "You WON!" : `You lost :( - ${playerWon.nickName} won the game!`;
-            text = playerWon.socketID === connectionId 
-                ? "Congratulations!" 
-                : `Better luck next time, ${currentPlayer.nickName}!`;
-            gifUrl = playerWon.socketID === connectionId 
-                ? 'https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExOGkweWlweTBuanJjeWN0d2xna3R2YzJ0YWVoZTRkNmZhMTV5MjZrayZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xT0GqssRweIhlz209i/giphy.gif' 
-                : 'https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExNnBpM3dvYjgyYWdhaXJ0dzk3M2NkY3U3NzVzdzExamd6N2VkYTYweiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/B4uP3h97Hi2UaqS0E3/giphy.gif';
-        }
-
-
-        
-
-        Swal.fire({
-            title: title,
-            text: text,
-            imageUrl: gifUrl,
-            imageAlt: 'Custom GIF',
-            confirmButtonText: 'OK',
-        }).then((result) => {
-            if (result.isConfirmed) {
-                navigate(EndPoint.Paths.GameMenu); // Navigate to home on OK click
-            }
-        });
-    };
-
     const alertMessage = (message, success = false) => {
         Swal.fire({
             title: message,
@@ -107,7 +75,7 @@ export const GameStateProvider = ({ children }) => {
     };
 
     return (
-        <GameStateContext.Provider value={{ gameState, updateGameState, findPlayer, fetchData, alertMessage, handleDone }}>
+        <GameStateContext.Provider value={{ gameState, updateGameState, findPlayer, fetchData, alertMessage }}>
             {children}
         </GameStateContext.Provider>
     );
