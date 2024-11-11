@@ -12,7 +12,8 @@ const TypeRacer = () => {
     const {gameState, fetchData, findPlayer} = useGameState();
     const {connection, connectionId} = useSocket();
     const navigate = useNavigate();
-
+    const [wordStyles, setWordStyles] = useState([]);
+    const [currentStyleIndex, setCurrentStyleIndex] = useState(0);
     const [playerGameResults, setPlayerGameResults] = useState([]);
     const [doneTriggered, setDoneTriggered] = useState(false);
     const [initialLoaded, setInitialLoaded] = useState(false);
@@ -55,6 +56,20 @@ const TypeRacer = () => {
         }
     };
 
+    const fetchWordStyles = useCallback(async () => {
+        try {
+            const WordStyles = await fetchData(EndPoint.ApiPaths.WordStyles());            
+            if (Array.isArray(WordStyles)) {
+                setWordStyles(WordStyles);
+                console.log("Fetched WordStyles:", WordStyles);
+            } else {
+                console.error("Fetched WordStyles is not an array:", WordStyles);
+            }
+        } catch (error) {
+            console.error('Error fetching game settings:', error);
+        }
+    }, [fetchData]);
+
     const fetchPlayerGameResults = async () => {
         try {
             const PlayerGameResultData = await fetchData(EndPoint.ApiPaths.PlayerGameResults());
@@ -62,6 +77,12 @@ const TypeRacer = () => {
             console.log(PlayerGameResultData);
         } catch (error) {
             console.error('Error fetching game settings:', error);
+        }
+    };
+
+    const changeWordStyle = () => {
+        if (wordStyles.length > 0) {
+            setCurrentStyleIndex((prevIndex) => (prevIndex + 1) % wordStyles.length);
         }
     };
 
@@ -76,6 +97,7 @@ const TypeRacer = () => {
         if(!initialLoaded){
             console.log("Initiating loading")
             await fetchPlayerGameResults();
+            await fetchWordStyles();
             console.log("Loading finished")
             setInitialLoaded(true);
         }
@@ -93,10 +115,23 @@ const TypeRacer = () => {
                         <div className="countdown">
                             <EndPoint.Panels.CountDown player={findPlayer()} gameState={gameState}/>
                         </div>
+                        <EndPoint.Components.SButton            
+                                    onClick={()=> changeWordStyle()}
+                                    style={{
+                                        width: '10rem',
+                                        height: '2.5rem', 
+                                        padding: '5px',  
+                                        fontSize: '12pt', 
+                                    }}                               
+                            >
+                                Word Style
+                        </EndPoint.Components.SButton  >
                         <h1 className="nickname">{findPlayer()?.nickName || ""}</h1>
                     </div>
                     <div className="displaywords-wrapper">
-                        <EndPoint.Panels.WordDisplay gameState={gameState} player={findPlayer()}/>
+                        <EndPoint.Panels.WordDisplay gameState={gameState} player={findPlayer()}
+                        WordStyles={wordStyles[currentStyleIndex] || {}}
+                        />
                     </div>
                     <div className="input-wrapper">
                         <div className="forminput">
