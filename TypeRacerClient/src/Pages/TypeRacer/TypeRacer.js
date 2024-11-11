@@ -3,14 +3,17 @@ import { useNavigate } from 'react-router-dom';
 import { useSocket } from "../../Providers/Socket/SocketProvider";
 import { useGameState } from "../../Providers/GameState/GameStateProvider";
 import EndPoint from "../../EndPoint";
-
-import Swal from "sweetalert2";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUpDown } from '@fortawesome/free-solid-svg-icons';
 
 import './TypeRacer.css';
 
 const TypeRacer = () => {
-    const {gameState, fetchData, findPlayer} = useGameState();
-    const {connection, connectionId} = useSocket();
+    //Providers
+    const { gameState, fetchData, findPlayer } = useGameState();
+    const { connection, checkConnection } = useSocket();
+
+    //Utility
     const navigate = useNavigate();
     const [wordStyles, setWordStyles] = useState([]);
     const [currentStyleIndex, setCurrentStyleIndex] = useState(0);
@@ -72,13 +75,14 @@ const TypeRacer = () => {
 
     const fetchPlayerGameResults = async () => {
         try {
-            const PlayerGameResultData = await fetchData(EndPoint.ApiPaths.PlayerGameResults());
-            setPlayerGameResults(PlayerGameResultData);
-            console.log(PlayerGameResultData);
+            const powers = await fetchData(EndPoint.ApiPaths.PlayerPowers(playerId));
+            setPlayerPowers(powers);
+            console.log(powers);
         } catch (error) {
             console.error('Error fetching game settings:', error);
         }
-    };
+    }, [fetchData]);
+
 
     const changeWordStyle = () => {
         if (wordStyles.length > 0) {
@@ -101,11 +105,59 @@ const TypeRacer = () => {
             console.log("Loading finished")
             setInitialLoaded(true);
         }
+        console.log(messages);
+    };
+
+    useEffect(() => {
+        if (gameState) {
+            if (gameState.id !== "") {
+                if (gameState.players) {
+                    if (gameState.players.length > 0) {
+                        let player = findPlayer();
+
+                        if (player) {
+                            fetchPowers(player.id);
+                            fetchWordStyles();
+                            checkConnection();
+
+                            const handleDoneInner = ({ game, playerWon }) => {
+                                handleDone(playerWon, player);
+                            };
+
+                            const handleMessage = ({ playerNickName, msg }) => {
+                                setMessages((prevMessages) => [
+                                    ...prevMessages,
+                                    { playerNickName, msg }
+                                ]);
+                            };
+
+                            connection.on('done', handleDoneInner);
+                            connection.on('SendMessageToGame', handleMessage);
+                            return () => {
+                                connection.off('done', handleDoneInner);
+                                connection.off('SendMessageToGame', handleMessage);
+                            };
+                        }
+                    }
+                }
+            }
+        }
+    }, [connection, players, gameState, navigate, checkConnection, findPlayer, fetchPowers]);
+
+    if (id === "") {
+        navigate(EndPoint.Paths.GameMenu);
     }
 
-    useEffect(()=>{
-        InitialLoading();
-    }, [])
+    const handleInputKeyDown = (event) => {
+        if (event.key === "Enter") {
+            let player = findPlayer();
+            let gameId = gameState.id;
+            let playerId = player.id;
+            console.log('SendMessage', gameId, playerId, inputValue);
+            connection.invoke('SendMessage', gameId, playerId, inputValue);
+            setInputValue("");
+        }
+    };
 
     return (
         <>
@@ -113,7 +165,7 @@ const TypeRacer = () => {
                 <div className="typeracer-wrapper">
                     <div className="gameinfo-wrapper">
                         <div className="countdown">
-                            <EndPoint.Panels.CountDown player={findPlayer()} gameState={gameState}/>
+                            <EndPoint.Panels.CountDown />
                         </div>
                         <EndPoint.Components.SButton            
                                     onClick={()=> changeWordStyle()}
@@ -135,22 +187,40 @@ const TypeRacer = () => {
                     </div>
                     <div className="input-wrapper">
                         <div className="forminput">
-                            <EndPoint.Panels.InputForm gameState={gameState} player={findPlayer()}/>
+                            <EndPoint.Panels.InputForm isOpen={isOpen} isOver={isOver} gameId={id} player={findPlayer()} />
                         </div>
                         <div className="start">
-                            <EndPoint.Panels.StartButton player={findPlayer()} gameState={gameState} />
+                            <EndPoint.Panels.StartButton player={findPlayer()} gameId={id} />                            
                         </div>
                     </div>
                     <div className="powerboard">
-                        <EndPoint.Panels.PowerBoardPanel player={findPlayer()}/>
+                        <EndPoint.Panels.PowerBoardPanel playerPowers={playerPowers} />
                     </div>
                     <div className="other-players">
-                        <EndPoint.Panels.GamePlayersPanel gameState={gameState}/>
+                        <EndPoint.Panels.GamePlayersPanel players={players} />
                     </div>
                 </div>
             </div>
-            <div>
-                <EndPoint.Panels.GameLog player={findPlayer()} gameState={gameState}/>
+
+            {/* Button to change the word style */}
+            <div className={`gamelog ${gameLogMinimized ? 'minimized' : ''}`} >
+                <div className={`gamelog-close ${gameLogMinimized ? 'minimized' : ''}`} onClick={() => setGameLogMinimized(!gameLogMinimized)}>
+                    <p>Chats</p>
+                    <FontAwesomeIcon icon={faUpDown} className="gamelog-close-icon" onClick={() => setGameLogMinimized(!gameLogMinimized)} />
+                </div>
+                <div className={`gamelog-context ${gameLogMinimized ? 'minimized' : ''}`} ref={gameLogRef}>
+                    {messages && messages.map((playerMsg, index) => (
+                        <div key={index} className="logmsg">
+                            <p><strong>{playerMsg.playerNickName}</strong>: {playerMsg.msg}</p>
+                        </div>
+                    ))}
+                </div>
+                <EndPoint.Components.SInput
+                    className={`${gameLogMinimized ? 'minimized' : ''}`}
+                    onKeyDown={handleInputKeyDown}
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                />
             </div>
         </>
     );
