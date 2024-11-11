@@ -2,23 +2,23 @@ import React, { useState } from "react";
 import { useSocket } from "../../Providers/Socket/SocketProvider";
 import SButton from "../../Components/SButton";
 
-const StartButton = ({ player, gameId }) => {
+const StartButton = ({ player, gameState }) => {
   const [showBtn, setShowBtn] = useState(true);
   const {connection} = useSocket();
   // Early return if player is null or undefined
   if (!player) return null;
-  const playerId = player.id;
-  const { isPartyLeader } = player;
 
   const onClickHandler = async () => {
-    console.log("START TIME", player, gameId, connection.ConnectionId);
+    const playerId = player.id;
+    const gameId = gameState.id;
+
     connection.invoke('StartTimer', playerId, gameId);
     setShowBtn(false); 
   };
 
   return (
     <>
-      {isPartyLeader && showBtn ? (
+      {player.isPartyLeader && showBtn ? (
       <SButton 
         type="button" 
         onClick={onClickHandler} 

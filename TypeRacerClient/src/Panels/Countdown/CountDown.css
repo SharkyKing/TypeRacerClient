@@ -1,0 +1,25 @@
+.countDown{
+    pointer-events: none;
+    user-select: none;
+}
+
+.countDown .timer{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.countDown .timer h3 {
+    padding: 0;
+    margin: 0;
+}
+
+.countDown .timer h1 {
+    padding: 0;
+    margin: 0;
+}
+
+.gameInfo h3{
+    padding: 0;
+    margin: 0;
+}

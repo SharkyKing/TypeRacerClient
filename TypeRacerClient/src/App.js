@@ -8,7 +8,7 @@ function App() {
       <React.Fragment>
           <div className="navbar">
              <img src="/images/typing.png" alt="TypeRaceEnchanted" />
-             <h1>TYPE RACER - ENCAHNTED!</h1>
+             <h1>TYPE RACER - ENCHANTED!</h1>
           </div>
           <div className="main-content">
             <Routes>

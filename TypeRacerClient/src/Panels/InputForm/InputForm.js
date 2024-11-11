@@ -2,16 +2,16 @@ import React, {useState, useRef, useEffect} from "react";
 import { useSocket } from "../../Providers/Socket/SocketProvider";
 import SInput from "../../Components/SInput";
 
-const InputForm = ({isOpen, isOver, gameId, player})=>{
+const InputForm = ({gameState, player})=>{
     const {connection} = useSocket();
     const [userInput, setUserInput] = useState('');
     const textInput = useRef(null);
 
     useEffect(()=>{
-        if(!isOpen){
+        if(!gameState.isOpen){
             textInput.current.focus();
         }
-    }, [isOpen])
+    }, [gameState.isOpen])
 
     const resetForm =() => {
         setUserInput("");
@@ -23,8 +23,9 @@ const InputForm = ({isOpen, isOver, gameId, player})=>{
         if(lastChar === " "){
             if (connection) {
                 try {
-                    console.log(userInput, gameId)
-                    await connection.invoke('UserInput', userInput, gameId);
+                    if(userInput !== ""){
+                        connection.invoke('UserInput', userInput, gameState.id, player.id);
+                    }
                     resetForm();
                 } catch (error) {
                     console.error('Error creating game:', error);
@@ -41,7 +42,7 @@ const InputForm = ({isOpen, isOver, gameId, player})=>{
     return (
         <SInput
             type="text"
-            readOnly={isOpen || isOver || !player.inputEnabled}
+            readOnly={gameState.isOpen || gameState.isOver || !player.inputEnabled}
             onChange={onChange}
             value={userInput}
             className="form-control"

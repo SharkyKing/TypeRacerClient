@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useSocket } from "../../Providers/Socket/SocketProvider";
+import './CountDown.css'
 
-const CountDown = (props) => {
+const CountDown = ({player, gameState}) => {
     const {connection} = useSocket();
     const [timer, setTimer] = useState({ countDown: "", msg: "" });
     const { countDown, msg } = timer;
@@ -23,10 +24,17 @@ const CountDown = (props) => {
 
 
     return (
-        <>
-            <h1>{countDown}</h1>
-            <h3>{msg}</h3>
-        </>
+        <div className="countDown">
+            <div className="timer">
+                <h3>{msg} {">"} </h3>
+                <h1>{countDown}</h1>
+            </div>
+            { gameState.gameTypeId == 2 &&
+            <div className="gameInfo">
+                <h3>Mistakes: {player.mistakeCount}</h3>
+            </div>
+            }
+        </div>
     );
 }
 

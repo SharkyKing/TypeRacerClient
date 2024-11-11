@@ -92,7 +92,7 @@ const getLeftWords = (words, player, extraStyle) => {
 
 const WordDisplay = ({ words, player, WordStyles }) => {
     if (!player || typeof player.currentWordIndex !== 'number') {
-        return <div style={{ color: 'black' }}>{words}</div>
+        return <div style={{ color: 'black' }}>{gameState.words}</div>
     }
 
     const selectedStyle = WordStyles|| ''; 

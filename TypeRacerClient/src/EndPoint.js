@@ -14,6 +14,7 @@ import WordDisplay from "./Panels/WordDisplay/WordDisplay";
 import InputForm from "./Panels/InputForm/InputForm";
 import GamePlayersPanel from "./Panels/GamePlayersPanel/GamePlayersPanel";
 import PowerBoardPanel from "./Panels/PowerBoardPanel/PowerBoardPanel";
+import GameLog from "./Panels/GameLog/GameLog";
 //Explicit routes
 import GameRoutes from "./ExplicitRoutes/GameRoutes";
 
@@ -23,6 +24,7 @@ const EndPoint = {
   "ApiPaths":{
     Powers:() => `${ApiIP}api/game/powers`,
     WordStyles:() => `${ApiIP}api/game/wordStyles`,
+    PlayerGameResults:() => `${ApiIP}api/game/playerGameResults`,
     PlayerPowers:(id) => `${ApiIP}api/game/player/${id}/powers`,
     GameTypes:() => `${ApiIP}api/game/types`,
     GameLevels:() => `${ApiIP}api/game/levels`
@@ -44,7 +46,7 @@ const EndPoint = {
     SButton, SInput, SPowerUnit
   },
   "Panels": {
-    InputForm, WordDisplay, StartButton, CountDown, GamePlayersPanel, PowerBoardPanel
+    InputForm, WordDisplay, StartButton, CountDown, GamePlayersPanel, PowerBoardPanel,GameLog
   }
 };
 
