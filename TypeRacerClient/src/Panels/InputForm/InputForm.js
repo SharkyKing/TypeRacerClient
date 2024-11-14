@@ -1,9 +1,11 @@
 import React, {useState, useRef, useEffect} from "react";
 import { useSocket } from "../../Providers/Socket/SocketProvider";
+import { useGameState } from "../../Providers/GameState/GameStateProvider";
 import SInput from "../../Components/SInput";
 
-const InputForm = ({gameState, player})=>{
+const InputForm = ()=>{
     const {connection} = useSocket();
+    const {gameState, player} = useGameState();
     const [userInput, setUserInput] = useState('');
     const textInput = useRef(null);
 

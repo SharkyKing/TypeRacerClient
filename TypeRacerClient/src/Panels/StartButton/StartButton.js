@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { useSocket } from "../../Providers/Socket/SocketProvider";
+import { useGameState } from "../../Providers/GameState/GameStateProvider";
 import SButton from "../../Components/SButton";
 
-const StartButton = ({ player, gameState }) => {
+const StartButton = () => {
+  const {player, gameState} = useGameState();
   const [showBtn, setShowBtn] = useState(true);
   const {connection} = useSocket();
   // Early return if player is null or undefined

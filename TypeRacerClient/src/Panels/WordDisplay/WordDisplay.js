@@ -1,4 +1,4 @@
-import React from "react";
+import { useGameState } from "../../Providers/GameState/GameStateProvider";
 
 const invisibleTextStyle = {
     color: "transparent",
@@ -24,38 +24,88 @@ const leftStyle = {
     "color":"black"
 }
 
-const getTypedWords = (words, player) => {
+const parseStyleString = (styleString) => {
+    if (!styleString) return {};
+    console.log("tipas", typeof styleString);
+    console.log("value", styleString);
+    const styleObj = {};
+    const styles = styleString.split(';');
+
+    styles.forEach(style => {
+        const [property, value] = style.split(":").map(s => s.trim());
+        if (property && value) {
+            styleObj[property] = value;
+        }
+    });
+
+    return styleObj;
+};
+
+const getTypedWords = (words, player, extraStyle) => {
     const wordArray = words.split(" ");
     let typedWords = wordArray.slice(0, player.currentWordIndex).join(" ");
-    const style = player.wordVisible ? typedCorrectStyle : { ...typedCorrectStyle, ...invisibleTextStyle };
+    
+    const parsedExtraStyle = (typeof extraStyle === 'string' && extraStyle) 
+    ? parseStyleString(extraStyle) 
+    : {}; 
+
+
+    const style = {
+        ...player.wordVisible ? typedCorrectStyle : { ...typedCorrectStyle, ...invisibleTextStyle },
+        ...parsedExtraStyle, 
+    };
+
     return <span style={style}>{typedWords}</span>;
 };
 
-const getCurrentWord = (words, player) => {
+const getCurrentWord = (words, player, extraStyle) => {
     const wordArray = words.split(" ");
-    const style = player.wordVisible ? currentStyle : { ...currentStyle, ...invisibleTextStyle };
+    
+    const parsedExtraStyle = (typeof extraStyle === 'string' && extraStyle) 
+        ? parseStyleString(extraStyle) 
+        : {}; 
+
+
+    const style = {
+        ...player.wordVisible ? currentStyle : { ...currentStyle, ...invisibleTextStyle },
+        ...parsedExtraStyle,
+    };
+
     return <span style={style}>{wordArray[player.currentWordIndex]}</span>;
 };
 
-const getLeftWords = (words, player) => {
+const getLeftWords = (words, player, extraStyle) => {
     const wordArray = words.split(" ");
     let wordsLeft = wordArray.slice(player.currentWordIndex + 1, wordArray.length).join(" ");
-    const style = player.wordVisible ? leftStyle : { ...leftStyle, ...invisibleTextStyle };
-    return <span style={style}> {wordsLeft}</span>;
+    
+    const parsedExtraStyle = (typeof extraStyle === 'string' && extraStyle) 
+        ? parseStyleString(extraStyle) 
+        : {}; 
+
+    const style = {
+        ...player.wordVisible ? leftStyle : { ...leftStyle, ...invisibleTextStyle },
+        ...parsedExtraStyle,
+    };
+
+    return <span style={style}>{wordsLeft}</span>;
 };
 
-const WordDisplay = ({gameState, player}) => {
+const WordDisplay = () => {
+    const {player, gameState, wordStyles} = useGameState();
     if (!player || typeof player.currentWordIndex !== 'number') {
         return <div style={{ color: 'black' }}>{gameState.words}</div>
     }
 
+    const selectedStyle = wordStyles|| ''; 
+    const styleString = selectedStyle ? selectedStyle : '';
     return (
         <>
-            {getTypedWords(gameState.words, player)}
-            {getCurrentWord(gameState.words, player)}
-            {getLeftWords(gameState.words, player)}
+            {getTypedWords(gameState.words, player, styleString)}
+            {getCurrentWord(gameState.words, player, styleString)}
+            {getLeftWords(gameState.words, player, styleString)}
         </>
-    )
-}
+    );
+};
+
 
 export default WordDisplay;

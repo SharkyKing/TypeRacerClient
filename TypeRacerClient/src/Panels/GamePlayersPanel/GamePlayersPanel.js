@@ -3,13 +3,13 @@ import './GamePlayersPanel.css'
 import { useGameState } from "../../Providers/GameState/GameStateProvider";
 
 const GamePlayersPanel = () => {
-    const {findPlayer, gameState} = useGameState();
+    const {player, gameState} = useGameState();
     
     return (
         <> 
            
            {gameState.players && gameState.players.length > 0 && gameState.players.map((p) => {
-                if (p.socketID !== findPlayer()?.socketID) {
+                if (p.socketID !== player.socketID) {
                     return (
                         <div key={p.id} className="player">
                             <div className="player-info">({p.id}) {p.nickName} -</div>

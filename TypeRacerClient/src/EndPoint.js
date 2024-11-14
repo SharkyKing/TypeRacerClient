@@ -3,6 +3,7 @@ import CreateGame from "./Pages/CreateGame/CreateGame";
 import JoinGame from "./Pages/JoinGame/JoinGame";
 import GameMenu from "./Pages/GameMenu/GameMenu";
 import TypeRacer from "./Pages/TypeRacer/TypeRacer";
+import FailedToLoadPage from "./Pages/FailedToLoadPage/FailedToLoadPage";
 //Components
 import SButton from "./Components/SButton";
 import SInput from "./Components/SInput";
@@ -36,11 +37,12 @@ const EndPoint = {
     CreateGame: "/game/create", 
     JoinGame: "/game/join", 
     GameMenu: "/", 
+    FailedToLoadPage: "/failed", 
     TypeRacer: "/game/:gameID",
     TypeRacerById:(id) => `/game/${id}`,
   },
   "Pages":{
-    CreateGame, JoinGame, GameMenu, TypeRacer
+    CreateGame, JoinGame, GameMenu, TypeRacer, FailedToLoadPage
   },
   "Components":{
     SButton, SInput, SPowerUnit

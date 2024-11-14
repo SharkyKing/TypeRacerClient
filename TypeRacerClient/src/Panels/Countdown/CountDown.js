@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useSocket } from "../../Providers/Socket/SocketProvider";
+import { useGameState } from "../../Providers/GameState/GameStateProvider";
 import './CountDown.css'
 
-const CountDown = ({player, gameState}) => {
+const CountDown = () => {
     const {connection} = useSocket();
+    const {player, gameState} = useGameState();
+
     const [timer, setTimer] = useState({ countDown: "", msg: "" });
     const { countDown, msg } = timer;
 

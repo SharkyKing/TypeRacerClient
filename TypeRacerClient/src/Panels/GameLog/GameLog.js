@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useRef, useCallback} from "react";
 import { useSocket } from "../../Providers/Socket/SocketProvider";
+import { useGameState } from "../../Providers/GameState/GameStateProvider";
 import './GameLog.css'
 import EndPoint from "../../EndPoint";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUpDown } from '@fortawesome/free-solid-svg-icons';
 
-const GameLog = ({player, gameState}) => {
+const GameLog = () => {
     const {connection,checkConnection} = useSocket();
+    const {player, gameState} = useGameState();
     const [inputValue, setInputValue] = useState("");
     const [messages, setMessages] = useState([]); 
     const [gameLogMinimized, setGameLogMinimized] = useState(false)

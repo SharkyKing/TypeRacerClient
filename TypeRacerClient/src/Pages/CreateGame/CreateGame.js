@@ -1,44 +1,28 @@
 import React, {useState, useEffect, useCallback} from "react";
-import { useSocket } from "../../Providers/Socket/SocketProvider";
+import { useFunction } from "../../Providers/FunctionProvider/FunctionProvider";
 import { useGameState } from "../../Providers/GameState/GameStateProvider";
+import { useSocket } from "../../Providers/Socket/SocketProvider";
 import './CreateGame.css'
 import EndPoint from "../../EndPoint";
 
 const CreateGame = () => {
-    const [nickName, setNickName] = useState('')
-    const {invokeHubMethod} = useSocket();
-    const {fetchData} = useGameState();
+    const {InvokeHubMethod, InfoMessage} = useFunction();
+    const {gameTypes, gameLevels} = useGameState();
+    const {connectionGUID} = useSocket();
 
-    const [gameTypes, setGameTypes] = useState([]);
-    const [gameLevels, setGameLevels] = useState([]);
+    const [nickName, setNickName] = useState('')
 
     const [activeGameType, setActiveGameType] = useState(1);
     const [activeGameLevel, setActiveGameLevel] = useState(1);
 
-    const fetchGameSettings = useCallback(async () => {
-        try {
-            if(!gameTypes || gameTypes.length === 0){
-                const gameTypes = await fetchData(EndPoint.ApiPaths.GameTypes());
-                setGameTypes(gameTypes);
-            }
-            if(!gameLevels || gameLevels.length === 0){
-                const gameLevels = await fetchData(EndPoint.ApiPaths.GameLevels());
-                setGameLevels(gameLevels);
-            }
-        } catch (error) {
-            console.error('Error fetching game settings:', error);
-        }
-    }, [fetchData]);
-
-    useEffect(() => {
-        fetchGameSettings();
-    }, [fetchGameSettings]);
-
-    
-
     const onSubmit = async (e) => {
-        e.preventDefault();
-        await invokeHubMethod('CreateGame', nickName, activeGameType, activeGameLevel);
+        if(nickName === ""){
+            InfoMessage("Username is required")
+        } 
+        else {
+            e.preventDefault();
+            await InvokeHubMethod('CreateGame', nickName, activeGameType, activeGameLevel, connectionGUID);
+        }
     };
 
     return(
@@ -75,11 +59,13 @@ const CreateGame = () => {
                     <EndPoint.Components.SInput type="text"
                         name="nickName"
                         value={nickName}
-                        onChange={(e) => setNickName(e.target.value)}
+                        onChange={(e) => {
+                            setNickName(e.target.value)
+                        }}
                         placeholder="| Username"
                         className="form-control">
                     </EndPoint.Components.SInput>
-                    <EndPoint.Components.SButton onClick={onSubmit} className="btn btn-primary">
+                    <EndPoint.Components.SButton onClick={onSubmit}>
                         Continue
                     </EndPoint.Components.SButton>
                 </div>

@@ -3,24 +3,26 @@ import './PowerBoardPanel.css'
 import EndPoint from "../../EndPoint";
 import { useGameState } from '../../Providers/GameState/GameStateProvider';
 import { useSocket } from "../../Providers/Socket/SocketProvider";
+import { useFunction } from "../../Providers/FunctionProvider/FunctionProvider";
 
-const PowerBoardPanel = ({player}) => {
-    const {gameState, findPlayer, fetchData} = useGameState();
+const PowerBoardPanel = () => {
+    const {gameState, player} = useGameState();
+    const {FetchData} = useFunction();
     const { connection } = useSocket();
     const [playerPowers, setPlayerPowers] = useState([]);
  
     const fetchPowers = useCallback(async () => {
         try {
-            const powers = await fetchData(EndPoint.ApiPaths.PlayerPowers(player.id));
+            const powers = await FetchData(EndPoint.ApiPaths.PlayerPowers(player.id));
             setPlayerPowers(powers);
         } catch (error) {
             console.error('Error fetching game settings:', error);
         }
-    }, [fetchData]);
+    }, [FetchData]);
 
     useEffect(() => {
         if(playerPowers.length > 0 && !gameState.isOpen){
-            connection.invoke('StartPowerCooldown', findPlayer().id);
+            connection.invoke('StartPowerCooldown', player.id);
         }
         else{
             fetchPowers()
