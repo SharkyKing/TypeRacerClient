@@ -18,7 +18,7 @@ export const SocketProvider = (props) => {
     const [connection, setConnection] = useState(null);
     const [connectionId, setConnectionId] = useState(null);
     const [connectionGUID, setConnectionGUID] = useState(localStorage.getItem("connectionGUID") || "")
-    const [reconnectAttempts, setReconnectAttempts] = useState(0);
+    const [reconnectAttempts, setReconnectAttempts] = useState(1);
     const maxReconnectAttempts = 5;
 
     useEffect(() => {
@@ -47,7 +47,6 @@ export const SocketProvider = (props) => {
                 if (reconnectAttempts < maxReconnectAttempts) {
                     const retryDelay = Math.min(Math.pow(2, reconnectAttempts) * 1000, 30000);
                     setReconnectAttempts(reconnectAttempts + 1);
-                    console.log(`Retrying connection in ${retryDelay / 1000} seconds (Attempt ${reconnectAttempts})...`);
 
                     setTimeout(startConnection, retryDelay);
 

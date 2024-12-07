@@ -1,17 +1,18 @@
 import React, {useState} from "react";
 import { useSocket } from "../../Providers/Socket/SocketProvider.js";
+import { useFunction } from "../../Providers/FunctionProvider/FunctionProvider";
 import './JoinGame.css'
 import EndPoint from "../../EndPoint.js";
 
 const JoinGame = () => {
     const [nickName, setNickName] = useState('')
     const [gameId, setGameID] = useState('')
-
-    const {invokeHubMethod} = useSocket();
+    const {connectionGUID} = useSocket();
+    const {InvokeHubMethod} = useFunction();
 
     const onSubmit = async (e) => {
         e.preventDefault();
-        await invokeHubMethod('JoinGame', gameId, nickName);
+        await InvokeHubMethod('JoinGame', gameId, nickName, connectionGUID);
     };
 
     return(

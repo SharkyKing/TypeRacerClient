@@ -11,17 +11,17 @@ const TypeRacer = () => {
     const {player, playerGameResults, wordStyles, currentStyleIndex,changeWordStyle} = useGameState();
     const {connection, navigate, connectionGUID, connectionId} = useSocket();
 
-    const handleDone = ({ playerWon }) => {
+useEffect(() => {
+    const handleDone = (playerWon) => {
         let gameResult;
-        console.log(wordStyles)
+        console.log(playerGameResults);
 
-        
         if (playerWon?.id > 0) {
             gameResult = playerGameResults.find(item => item.id === (playerWon.connectionGUID === connectionGUID ? 1 : 2));
         } else {
             gameResult = playerGameResults.find(item => item.id === 3);
         }
-        
+
         if (gameResult) {
             Swal.fire({
                 title: gameResult.title,
@@ -39,12 +39,20 @@ const TypeRacer = () => {
         }
     };
 
-    useEffect(() => {
-        connection.on('done', handleDone);
-        return () => {
+    // Register the event listener
+    connection.on('done', handleDone);
+
+    // Cleanup logic
+    return () => {
+        console.log('Cleaning up handleDone listener');
+        if (typeof connection.off === 'function') {
             connection.off('done', handleDone);
-        };
-    }, [connectionId]);
+        } else {
+            console.warn('connection.off is not a function');
+        }
+    };
+}, [connection, connectionId, playerGameResults, connectionGUID, navigate]);
+
 
     return (
         <>
