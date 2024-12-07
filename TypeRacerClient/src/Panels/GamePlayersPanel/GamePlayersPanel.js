@@ -4,12 +4,11 @@ import { useGameState } from "../../Providers/GameState/GameStateProvider";
 
 const GamePlayersPanel = () => {
     const {player, gameState} = useGameState();
-    
     return (
         <> 
            
            {gameState.players && gameState.players.length > 0 && gameState.players.map((p) => {
-                if (p.socketID !== player.socketID) {
+                if (p.connectionGUID !== player.connectionGUID) {
                     return (
                         <div key={p.id} className="player">
                             <div className="player-info">({p.id}) {p.nickName} -</div>

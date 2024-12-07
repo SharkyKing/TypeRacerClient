@@ -28,7 +28,6 @@ export const GameStateProvider = ({ children }) => {
     const [player, setPlayer] = useState(null);
 
     const FindPlayer = (gameStateParam) => {
-        console.log(gameStateParam, connectionId)
         if (!gameStateParam.players || !Array.isArray(gameStateParam.players)) {
             AlertMessage("Failed to load player game array");
             navigate(EndPoint.Paths.GameMenu);
@@ -43,7 +42,6 @@ export const GameStateProvider = ({ children }) => {
                 if (Array.isArray(gameTypesData)) {
                     setGameTypes(gameTypesData);
                     localStorage.setItem("gameTypes", JSON.stringify(gameTypesData));
-                    console.log("Game types loaded", gameTypesData);
                 } else {
                     AlertMessage("Failed to fetch game types");
                     navigate(EndPoint.Paths.GameMenu);
@@ -54,7 +52,6 @@ export const GameStateProvider = ({ children }) => {
                 if (Array.isArray(gameLevelsData)) {
                     setGameLevels(gameLevelsData);
                     localStorage.setItem("gameLevels", JSON.stringify(gameLevelsData));
-                    console.log("Game levels loaded", gameLevelsData);
                 } else {
                     AlertMessage("Failed to fetch game levels");
                     navigate(EndPoint.Paths.GameMenu);
@@ -65,7 +62,6 @@ export const GameStateProvider = ({ children }) => {
                 if (Array.isArray(playerGameResultData)) {
                     setPlayerGameResults(playerGameResultData);
                     localStorage.setItem("playerGameResult", JSON.stringify(playerGameResultData));
-                    console.log("Player result data loaded", playerGameResultData);
                 } else {
                     AlertMessage("Failed to fetch game player result data");
                     navigate(EndPoint.Paths.GameMenu);
@@ -76,7 +72,6 @@ export const GameStateProvider = ({ children }) => {
                 if (Array.isArray(wordStylesData)) {
                     setWordStyles(wordStylesData);
                     localStorage.setItem("wordStyles", JSON.stringify(wordStylesData));
-                    console.log("Word styles loaded", wordStylesData);
                 } else {
                     AlertMessage("Failed to fetch word styles");
                     navigate(EndPoint.Paths.GameMenu);
@@ -108,7 +103,51 @@ export const GameStateProvider = ({ children }) => {
                 connection.off('UpdateGame', handleGameUpdate);
             }
         };
-    }, [connectionId]);
+    }, [connectionId, gameState]);
+
+    useEffect(() => {
+        const handleDone = (playerWon) => {
+            let gameResult;
+            
+            let possibleGameResultId = (playerWon.playerWon.connectionGUID === connectionGUID.toString() ? 1 : 2)
+
+            console.log(playerGameResults, playerWon.playerWon.connectionGUID, connectionGUID.toString(), possibleGameResultId);
+
+            if (playerWon?.playerWon.id > 0) {
+                gameResult = playerGameResults.find(item => item.id === possibleGameResultId);
+            } else {
+                gameResult = playerGameResults.find(item => item.id === 3);
+            }
+
+            if (gameResult) {
+                Swal.fire({
+                    title: gameResult.title,
+                    text: gameResult.text,
+                    imageUrl: gameResult.gifUrl,
+                    imageAlt: 'Game Result GIF',
+                    confirmButtonText: 'OK',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        navigate(EndPoint.Paths.GameMenu);
+                    }
+                });
+            }
+        };
+
+        // Register the event listener
+        connection.on('done', handleDone);
+
+        // Cleanup logic
+        return () => {
+            if (typeof connection.off === 'function') {
+                connection.off('done', handleDone);
+            } else {
+                console.warn('connection.off is not a function');
+            }
+        };
+    }, [connectionId, gameState, playerGameResults]);
 
     useEffect(() => {
         if (gameState.id !== "" && player) {

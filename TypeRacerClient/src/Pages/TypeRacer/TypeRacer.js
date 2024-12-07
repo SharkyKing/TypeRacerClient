@@ -8,52 +8,9 @@ import Swal from "sweetalert2";
 import './TypeRacer.css';
 
 const TypeRacer = () => {
-    const {player, playerGameResults, wordStyles, currentStyleIndex,changeWordStyle} = useGameState();
     const {connection, navigate, connectionGUID, connectionId} = useSocket();
-
-useEffect(() => {
-    const handleDone = (playerWon) => {
-        let gameResult;
-        console.log(playerGameResults);
-
-        if (playerWon?.id > 0) {
-            gameResult = playerGameResults.find(item => item.id === (playerWon.connectionGUID === connectionGUID ? 1 : 2));
-        } else {
-            gameResult = playerGameResults.find(item => item.id === 3);
-        }
-
-        if (gameResult) {
-            Swal.fire({
-                title: gameResult.title,
-                text: gameResult.text,
-                imageUrl: gameResult.gifUrl,
-                imageAlt: 'Game Result GIF',
-                confirmButtonText: 'OK',
-                allowOutsideClick: false,
-                allowEscapeKey: false
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    navigate(EndPoint.Paths.GameMenu);
-                }
-            });
-        }
-    };
-
-    // Register the event listener
-    connection.on('done', handleDone);
-
-    // Cleanup logic
-    return () => {
-        console.log('Cleaning up handleDone listener');
-        if (typeof connection.off === 'function') {
-            connection.off('done', handleDone);
-        } else {
-            console.warn('connection.off is not a function');
-        }
-    };
-}, [connection, connectionId, playerGameResults, connectionGUID, navigate]);
-
-
+    const {player, playerGameResults, wordStyles, currentStyleIndex,changeWordStyle} = useGameState();
+    
     return (
         <>
             <div className="typeracer-body">
