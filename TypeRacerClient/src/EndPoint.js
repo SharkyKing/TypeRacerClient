@@ -28,7 +28,8 @@ const EndPoint = {
     PlayerGameResults:() => `${ApiIP}api/game/playerGameResults`,
     PlayerPowers:(id) => `${ApiIP}api/game/player/${id}/powers`,
     GameTypes:() => `${ApiIP}api/game/types`,
-    GameLevels:() => `${ApiIP}api/game/levels`
+    GameLevels:() => `${ApiIP}api/game/levels`,
+    PlayerLastMessage:(id) => `${ApiIP}api/game/lastMessage/${id}`,
   },
   "ExplicitRoutes":{
     GameRoutes

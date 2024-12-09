@@ -5,6 +5,8 @@ import './GameLog.css'
 import EndPoint from "../../EndPoint";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUpDown } from '@fortawesome/free-solid-svg-icons';
+import { useFunction } from "../../Providers/FunctionProvider/FunctionProvider";
+import axios from "axios";
 
 const GameLog = () => {
     const {connection,checkConnection} = useSocket();
@@ -13,6 +15,7 @@ const GameLog = () => {
     const [messages, setMessages] = useState([]); 
     const [gameLogMinimized, setGameLogMinimized] = useState(false)
     const gameLogRef = useRef(null);
+    const {FetchData, AlertMessage} = useFunction();
 
     useEffect(() => {
         const setupGame = async () => {
@@ -30,7 +33,7 @@ const GameLog = () => {
         setupGame();
     }, []);
 
-    const handleInputKeyDown = (event) => {
+    const handleInputKeyDown = async (event) => {
         if (event.key === "Enter") {
             if(!player || !gameState) return;
             
@@ -38,6 +41,15 @@ const GameLog = () => {
             let playerId = player.id;
             connection.invoke('SendMessage', gameId, playerId, inputValue);
             setInputValue("");
+        }else if (event.key === "ArrowUp") {
+            try {
+                let playerId = player.id;
+                const response = await axios.get(EndPoint.ApiPaths.PlayerLastMessage(playerId));
+                console.log(response)
+                setInputValue(response.data); 
+            } catch (error) {
+                console.error("Error fetching last message:", error);
+            }
         }
     };
 
